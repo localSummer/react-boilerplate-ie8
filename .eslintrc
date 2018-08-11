@@ -1,0 +1,28 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "rules": {
+    "semi": ["error", "never"],
+    "react/prefer-stateless-function": 0,
+    "global-require": 0,
+    "linebreak-style": 0,
+    "no-console": 0,
+    "no-param-reassign": [2, {
+      "props": false
+    }]
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true, 
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "document": true,
+    "window": true
+  }
+}

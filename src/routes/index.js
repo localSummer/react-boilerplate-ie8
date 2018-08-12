@@ -1,10 +1,11 @@
 // We only need to import the modules necessary for initial render
-import React from 'react';
-import { Router, Route, hashHistory, IndexRoute, Redirect } from 'react-router';
-import App from '../components/App';
-import Inbox from '../components/Inbox';
-import Message from '../components/Message';
-import Count from '../components/Count';
+import React from 'react'
+import { Router, Route, hashHistory, IndexRoute, Redirect } from 'react-router'
+import App from '../components/App'
+import Inbox from '../components/Inbox'
+import Message from '../components/Message'
+import Count from '../components/Count'
+import Echarts from '../components/Echarts'
 
 const Routes = () => (
   <Router history={hashHistory}>
@@ -14,6 +15,7 @@ const Routes = () => (
         <Route path="messages/:id" component={Message} />
       </Route>
       <Route path="count" component={Count}></Route>
+      <Route path="chart" component={Echarts}></Route>
     </Route>
     <Redirect from="*" to="/" />
   </Router>

@@ -94,7 +94,7 @@ const config = {
       minify: !DEBUG ? {
         collapseWhitespace: true,
       } : null,
-      hash: false,
+      hash: true,
     }),
   ],
 

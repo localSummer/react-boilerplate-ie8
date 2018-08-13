@@ -1,15 +1,42 @@
 import React from 'react'
-import '../static/js/html5media'
 
 class Video extends React.Component {
+    handlePlay = () => {
+        this.embed.play()
+    }
+
+    handlePause = () => {
+        this.embed.pause()
+    }
+
+    handleStateChange = (stateChange) => {
+        console.log(stateChange)
+    }
+
+    handleOnPlay = () => {
+        console.log('start play')
+    }
+
+    handleOnPause = () => {
+        console.log('pause')
+    }
+
     render() {
         return (
             <div>
-                <video class="video" poster="//media.html5media.info/poster.jpg" width="618" height="347" controls preload>
-                    <source src="//media.html5media.info/video.mp4" media="only screen and (min-device-width: 568px)"></source>
-                    <source src="//media.html5media.info/video.iphone.mp4" media="only screen and (max-device-width: 568px)"></source>
-                    <source src="//media.html5media.info/video.ogv"></source>
-                </video>
+                <embed 
+                    title="video" 
+                    ref={(embed) => {this.embed = embed}}
+                    src="https://media.html5media.info/video.mp4"
+                    width="618" 
+                    height="347" 
+                    controls
+                    onreadystatechange={this.handleStateChange}
+                    onplay={this.handleOnPlay}
+                    onpause={this.handleOnPause}
+                />
+                <button onClick={this.handlePlay}>播放</button>
+                <button onClick={this.handlePause}>暂停</button>
             </div>
         )
     }

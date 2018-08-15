@@ -10,7 +10,7 @@ class Video3 extends React.Component {
                     ogv: "http://www.jplayer.org/video/ogv/Big_Buck_Bunny_Trailer.ogv",
                     webmv: "http://www.jplayer.org/video/webm/Big_Buck_Bunny_Trailer.webm",
                     poster: "http://www.jplayer.org/video/poster/Big_Buck_Bunny_Trailer_480x270.png"
-                });
+                }).jPlayer("play");
             },
             swfPath: "https://cdn.bootcss.com/jplayer/2.9.1/jplayer/jquery.jplayer.swf",
             supplied: "webmv, ogv, m4v",

@@ -67,8 +67,13 @@ class Inbox extends React.Component {
         history.push('/video3')
     }
 
+    handleVideo4 = () => {
+        let {history} = this.props
+        history.push('/video4')
+    }
+
     handleChange = (value, dateString) => {
-        console.log(value, dateString);
+        console.log(value, dateString)
     }
 
     render() {
@@ -85,6 +90,7 @@ class Inbox extends React.Component {
                 <button onClick={this.handleVideo}>go video</button>
                 <button onClick={this.handleVideo2}>go video2</button>
                 <button onClick={this.handleVideo3}>go video3</button>
+                <button onClick={this.handleVideo4}>go video4</button>
                 {this.props.children || "Welcome to your Inbox"}
                 {
                     data? (

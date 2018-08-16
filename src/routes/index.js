@@ -9,6 +9,7 @@ import Echarts from '../components/Echarts'
 import Video from '../components/Video'
 import Video2 from '../components/Video2'
 import Video3 from '../components/Video3'
+import Video4 from '../components/Video4'
 
 const Routes = () => (
     <Router history={hashHistory}>
@@ -22,6 +23,7 @@ const Routes = () => (
             <Route path="video" component={Video}></Route>
             <Route path="video2" component={Video2}></Route>
             <Route path="video3" component={Video3}></Route>
+            <Route path="video4" component={Video4}></Route>
         </Route>
         <Redirect from="*" to="/" />
     </Router>

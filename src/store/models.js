@@ -16,6 +16,16 @@ const count = {
     }
 }
 
+const player = {
+    state: null,
+    reducers: {
+        updatePlayer(state, player) {
+          return player
+        }
+    }
+}
+
 export default {
-  count
+    count,
+    player
 }

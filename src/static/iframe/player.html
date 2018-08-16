@@ -1,0 +1,475 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title></title>
+	   <style type='text/css'>
+        html,
+        body {
+            height: 100%;
+            text-align: center
+        }
+
+        .ctl {
+            text-align: center;
+            margin: 0 auto;
+            width: 75%;
+            height: 75%;
+        }
+
+        #vssplayer {
+            width: 100%;
+            height: 100%;
+            /*position:absolute;*/
+            text-align: center;
+            background: #000;
+            margin: 0 auto;
+            border: 1px solid #F00
+        }
+
+        #div_btn {
+            width: 80%;
+            height: 20%;
+            margin-top: 20px;
+            /*position:absolute;*/
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .tab {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        .tab table {
+            width: 80%;
+            height: 100%;
+            text-align: center;
+        }
+
+        .tab input,.tab select {
+            width: 100px;
+            height: 25px;
+            margin-left: 20px;
+            text-align: center;
+        }
+    </style>
+	
+	<meta http-equiv="X-UA-Compatible" content="IE=10">
+	<meta charset="utf-8">
+		
+    <script language="javascript" type="text/javascript">
+		
+		function Ready(){
+		    var workspace = document.getElementById("workspace");
+			    
+			workspace.attachEvent("OnInitSuccessed", OnInitSuccessed);
+			workspace.attachEvent("OnInitFailed", OnInitFailed);
+			workspace.attachEvent("OnDisconnect", OnDisconnect);
+			
+			workspace.attachEvent("OnGetDeviceListSuccessed", OnGetDeviceListSuccessed);
+			workspace.attachEvent("OnGetDeviceListFailed", OnGetDeviceListFailed);
+			
+			workspace.attachEvent("OnRecordQuerySuccessed", OnRecordQuerySuccessed);
+			workspace.attachEvent("OnRecordQueryFailed", OnRecordQueryFailed);
+			
+			for (var i=1;i<2;i++)
+			{
+				var playname="player" + i;
+				player = document.getElementById(playname);
+				player.attachEvent("OnLButtonDown", OnLButtonDown);
+				player.attachEvent("OnRButtonDown", OnRButtonDown);
+				player.attachEvent("OnStateChanged", OnStateChanged);
+				player.attachEvent("OnStreamInfo", OnStreamInfo);
+			}
+			
+		}
+		
+		//----------------------------------------------------------------------------
+		//workspace事件
+		
+		//初始化成功通知
+		function OnInitSuccessed(e) {
+			//alert('OnInitSuccessed');
+		}
+		function OnInitFailed(errorcode) {
+			alert('OnInitFailed:' + errorcode);
+		}
+		
+		//和服务失去连接通知
+		function OnDisconnect(e) {
+			alert('OnDisconnect');
+		}
+		
+		//获取资源列表通知
+		function OnGetDeviceListSuccessed(e) {
+			alert('GetDeviceSuccessed:' + e);
+		}
+		function OnGetDeviceListFailed(e) {
+			alert('OnGetDeviceListFailed ' + e);
+		}
+		//录像查询
+		function OnRecordQuerySuccessed(id, btsXml) {
+			alert('OnRecordQuerySuccessed ' + id + '  ' + btsXml);
+		}
+		function OnRecordQueryFailed(id, errcode) {
+			alert('OnRecordQueryFailed ' + id + '  ' + errcode);
+		}
+		
+		
+		//player事件
+		
+		//需要请求视频成功，才会回调，浏览器只支持左键单击，不支持双击，右键
+		function OnLButtonDown(x,y) { 
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = '左键单击:' + x + ' ' + y;
+		}
+		function OnRButtonDown(x,y) { 
+			alert('右键单击:' + x + ' ' + y);
+		}
+		
+		//请求视频成功，失败通知
+		function OnStateChanged(type) { 
+			
+			if (type==0)
+			{
+				alert('请求视频成功！');
+			}
+			else if (type==5)
+			{
+				alert('播放视频完毕！');
+			}
+			else
+			{
+				alert('请求视频失败' + type);
+			}
+		}
+		//码流信息通知，一秒一次
+		function OnStreamInfo(e) {
+			//alert('OnStreamInfo:' + e);
+		}
+
+		//----------------------------------------------------------------------------
+				
+		function SelectPlayer(){
+			var selectwindow = document.getElementById("selectwindow").value;
+			//alert("选择窗口:" + selectwindow );
+			if (selectwindow=="2")
+			{
+				return  document.getElementById("player2");
+			}
+			
+			return document.getElementById("player1");
+		}
+		
+				
+		//登录
+		function Login() {
+			//初始化，设置事件
+			Ready();
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "初始化，设置事件完毕！";
+			
+			var userIP = document.getElementById("IP").value;
+		    var userID = document.getElementById("UserName").value;
+			var userpwd = document.getElementById("UserPasswd").value;
+			
+			
+			var workspace = document.getElementById("workspace");
+
+			var flag = workspace.InitNew('userID', userpwd, userIP, 8083);
+			
+			if (flag == 0)//成功
+			{
+				document.getElementById("player1").ConnectToWorkspace(workspace);
+				document.getElementById("player2").ConnectToWorkspace(workspace);
+       
+				LOG.innerHTML = "登录成功！";				
+			}
+			else {
+				LOG.innerHTML = "登录失败！";
+			}
+        }
+		
+		function Logout() {
+		
+			for (var i=1;i<2;i++)
+			{
+				var playname="player" + i;
+				var player = document.getElementById(playname);
+				player.Stop();
+			}
+				
+			var workspace = document.getElementById("workspace");
+            workspace.Uninit();
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "注销成功！";
+        }
+		
+		function GetDevice() {
+
+			var iResult = 0;
+			iResult = document.getElementById("workspace").GetDeviceList();
+			if (iResult < 0)
+			{
+				var LOG = document.getElementById("log");
+				LOG.innerHTML = "获取资源列表失败:" + ret1;
+			}
+		}
+		
+		//实时视频
+        function RealPlay() {
+
+			var deviceId = document.getElementById("devpubid").value;
+            var ret1 = SelectPlayer().Invite(deviceId, "0", "");(false);
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "实时视频请求:" + ret1;
+ 
+			
+        }
+		//停止预览，点播，下载视频
+        function Stop() {			
+			SelectPlayer().Stop();
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "停止实时预览，历史点播下载视频";
+        }
+
+		//截图
+		function Captrue() {
+
+            SelectPlayer().DoSnapPicture("c:\\DoSnapPicture.jpg", 1);
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "截图的路径:" + "c:\\DoSnapPicture.jpg";
+        }
+		
+		//实时视频录像
+		function RecordStart() {
+			SelectPlayer().StartRecord("c:\\ivms_record.avi", 0);
+
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "实时视频录像文件地址:" + "c:\\ivms_record.avi";
+
+        }
+		function RecordStop() {
+            SelectPlayer().StopRecord();
+        }
+		
+		//ptz
+		function PtzUp(){
+			var deviceId = document.getElementById("devpubid").value;
+			var ret = document.getElementById("workspace").PtzControl(deviceId, 8, 200);
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "控制上返回:" + ret;
+		}
+		function PtzDown(){
+			var deviceId = document.getElementById("devpubid").value;
+			document.getElementById("workspace").PtzControl(deviceId, 4, 200);
+		}
+		function PtzLeft(){
+			var deviceId = document.getElementById("devpubid").value;
+			document.getElementById("workspace").PtzControl(deviceId, 2, 200);
+		}
+		function PtzRight(){
+			var deviceId = document.getElementById("devpubid").value;
+			document.getElementById("workspace").PtzControl(deviceId, 1, 200);
+		}
+		
+		function PtzStop(){
+			var deviceId = document.getElementById("devpubid").value;
+			document.getElementById("workspace").PtzControl(deviceId, 0, 0);
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "控制停止";
+		}
+		
+		function PtzFar(){
+			var deviceId = document.getElementById("devpubid").value;
+			document.getElementById("workspace").PtzControl(deviceId, 18, 14);
+		}
+		function PtzNear(){
+			var deviceId = document.getElementById("devpubid").value;
+			document.getElementById("workspace").PtzControl(deviceId, 17, 14);
+		}
+		
+		function PtzSetPos(){
+			var deviceId = document.getElementById("devpubid").value;
+			var PosNumber = document.getElementById("PosNumber").value;
+			document.getElementById("workspace").PtzControl(deviceId, 129, Number(PosNumber) );
+		}
+		function PtzGetPos(){
+			var deviceId = document.getElementById("devpubid").value;
+			var PosNumber = document.getElementById("PosNumber").value;
+			document.getElementById("workspace").PtzControl(deviceId, 130, Number(PosNumber));
+		}
+		
+		//录像查询
+		function RecordSearch() {
+			var deviceId = document.getElementById("devpubid").value;
+			var BeginTime = document.getElementById("BeginTime").value;
+			var EndTime = document.getElementById("EndTime").value;
+
+			var ret = document.getElementById("workspace").RecordQuery(deviceId, BeginTime, EndTime, "", "VOD", 0, 1, "");
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "录像查询:" + ret;
+       }
+		
+		//点播
+		function VodStart() {
+			var deviceId = document.getElementById("devpubid").value;
+			var BeginTime = document.getElementById("BeginTime").value;
+			var EndTime = document.getElementById("EndTime").value;
+			var bstrModel = "<?xml version=\"1.0\"?> <InviteConfig> <TransParam TransMode=\"\" StreamCBMode=\"\" /> <VideoParam Codec=\"2\" Resolution=\"4\" Fps=\"25\" BRMode=\"1\" Kbps=\"2000\" Enbale=\"0\" /> </InviteConfig>"; 
+
+			var ret = SelectPlayer().VodVideo(deviceId, BeginTime, EndTime, "0", bstrModel, "VOD");
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "点播:" + ret;
+        }
+		//下载
+		function Download() {
+			var deviceId = document.getElementById("devpubid").value;
+			var BeginTime = document.getElementById("BeginTime").value;
+			var EndTime = document.getElementById("EndTime").value;
+			var bstrModel = "<?xml version=\"1.0\"?> <InviteConfig> <TransParam TransMode=\"\" StreamCBMode=\"\" /> <VideoParam Codec=\"2\" Resolution=\"4\" Fps=\"25\" BRMode=\"1\" Kbps=\"2000\" Enbale=\"0\" /> </InviteConfig>"; 
+
+			var ret = SelectPlayer().VodDownload(deviceId, BeginTime, EndTime, "0", bstrModel, "c:\\ivms_download.avi", "VOD");
+			//var ret = SelectPlayer().Vod(deviceId, BeginTime, EndTime, "0", bstrModel, true, "c:\\ivms_download.avi", "VOD");
+			
+			var LOG = document.getElementById("log");
+			LOG.innerHTML = "下载:" + ret;
+        }
+		//点播控制
+		function VodCtrl() {
+		
+			var vodctrl = document.getElementById("vodctrl").value;
+			
+			if (vodctrl == "1")
+			{
+				SelectPlayer().Play( -1, 1);
+			}
+			else if (vodctrl == "2")
+			{
+				SelectPlayer().Pause();
+			}
+			else if (vodctrl == "3")
+			{
+				SelectPlayer().Play(-1, 4);
+			}
+			else if (vodctrl == "4")
+			{
+				SelectPlayer().Play(-1, 0.25);
+			}
+			else if (vodctrl == "5")
+			{
+				SelectPlayer().Play(20, 1);
+			}
+        }
+		
+    </script>
+ 
+</head>
+
+<body>
+	
+	<div id="div_center" style="height:300px;width:600px;position:relative;align:center;" >
+		<div><object id="player1" style="width: 600px; padding: 0px; margin: 0px; height: 300px" classid="clsid:34CFA83A-6845-4EDE-98EC-400B4A4A4F85">
+        </object></div>
+        
+		<div style="position:absolute;top:0;left:602px;">
+			 <object id="player2" style="width: 600px; padding: 0px; margin: 0px; height: 300px" classid="clsid:34CFA83A-6845-4EDE-98EC-400B4A4A4F85">
+        </object>
+		</div>
+			  
+		<object id="workspace" style="width: 0px; padding: 0px; margin: 0px; height: 0px" classid="clsid:779C82F4-182F-4D0C-847C-11C01BF1AC74">
+        </object>
+    </div> 
+	
+	<hr/>
+	
+    <div class="tab" id="div_btn">
+        <table>
+            <tr>
+				<td>
+                    <select id="selectwindow">
+                    <option value="1">窗口1</option>
+					<option value="2">窗口2</option>
+                    </select>
+                </td>
+				<td>IP<input id="IP" type="text" value="192.168.1.230" style="width:100px;height:20px;text-align:left" /></td>
+                <td>用户<input id="UserName" type="text" value="admin" style="width:80px;height:20px;text-align:left" /></td>
+				<td>密码<input id="UserPasswd" type="text" value="123456" style="width:80px;height:20px;text-align:left" /></td>
+                <td>设备号<input id="devpubid" type="text" value="11090110011310000001" style="width:170px;height:20px;text-align:left" /></td>
+                
+            </tr>
+            <tr>
+				<td><input value="登录" type="button" onclick="Login()" /></td>
+                <td><input value="注销" type="button" onclick="Logout()" /></td>
+				<td><input value="获取资源" type="button" onclick="GetDevice()" /></td>
+                <td><input value="实时预览" type="button" onclick="RealPlay()" /></td>
+				<td><input value="停止视频" type="button" onclick="Stop()" /></td>
+            </tr>
+			
+			<tr>
+                <td><input value="截图" type="button" onclick="Captrue()" /></td>
+				<td><input value="实时录像开始" type="button" onclick="RecordStart()" /></td>
+				<td><input value="实时录像停止" type="button" onclick="RecordStop()" /></td>
+            </tr>
+			
+			<tr>
+                <td><input value="上" type="button" onclick="PtzUp()" /></td>
+				<td><input value="下" type="button" onclick="PtzDown()" /></td>
+				<td><input value="左" type="button" onclick="PtzLeft()" /></td>
+				<td><input value="右" type="button" onclick="PtzRight()" /></td>
+				<td><input value="控制停" type="button" onclick="PtzStop()" /></td>
+            </tr>
+			<tr>
+				<td><input value="拉远" type="button" onclick="PtzFar()" /></td>
+				<td><input value="拉近" type="button" onclick="PtzNear()" /></td>
+				<td><input value="设预置位" type="button" onclick="PtzSetPos()" /></td>
+				<td><input value="调预置位" type="button" onclick="PtzGetPos()" /></td>
+				<td>预置位号<input id="PosNumber" type="text" value="1" style="width:25px;height:20px;text-align:left" /></td>
+            </tr>
+			
+			
+			<tr>
+				<td>开始<input id="BeginTime" type="text" value="2018-06-27T10:15:00" style="width:135px;height:20px;text-align:left" /></td>
+				<td>结束<input id="EndTime" type="text" value="2018-06-27T10:20:00" style="width:135px;height:20px;text-align:left" /></td>
+				<td><input value="录像查询" type="button" onclick="RecordSearch()" /></td>
+            </tr>
+			
+			<tr>
+                <td><input value="历史点播" type="button" onclick="VodStart()" /></td>
+				<td><input value="历史下载" type="button" onclick="Download()" /></td>
+                <td>
+                    <select id="vodctrl">
+                    <option value="1">播放</option>
+					<option value="2">暂停</option>
+					<option value="3">快放</option>
+					<option value="4">慢放</option>
+					<option value="5">跳转</option>
+                    </select>
+                </td>
+                <td><input value="点播控制" type="button" onclick="VodCtrl()" /></td>
+            </tr>
+
+
+			<tr>
+				<td align=center><font size=5 color=red><div id='log'></div></font>
+			</tr>
+			
+        </table>
+    </div>
+
+
+</body>
+
+</html>

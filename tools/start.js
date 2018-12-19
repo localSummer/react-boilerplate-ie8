@@ -15,6 +15,7 @@ const webpackDevMiddleware = require("webpack-dev-middleware");
 const webpackHotMiddleware = require("webpack-hot-middleware");
 const task = require("./task");
 const webpackConfig = require("../webpack.config");
+const url = require("url");
 const proxy = require("proxy-middleware");
 const proxyOptions = url.parse("http://192.168.110.85/dic");
 proxyOptions.route = "/dic";

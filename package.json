@@ -9,7 +9,7 @@
   "dependencies": {
     "@rematch/core": "^0.6.0",
     "antd": "1.11.6",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.5",
     "es5-shim": "^4.5.9",
